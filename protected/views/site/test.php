@@ -1,12 +1,11 @@
 <?php
 
-/* if multiple barcodes make sure itemId is unique */
-$optionsArray = array(
-    'itemId' => 'barcode-div', /* id for div or canvas */
-    'barocde' => '4797001018719', /* value for EAN 13 be careful to set right values for each barcode type */
-    'type' => 'code128', /* supported types  ean8, ean13, upc, std25, int25, code11, code39, code93, code128, codabar, msi, datamatrix */
-);
-echo Common::getItemBarcode($optionsArray);
+echo '<img src="/barcodegenerator/generatebarcode?code=jsk lkjsl kjl ">';
+echo '<img src="/barcodegenerator/generatebarcode?code=jalskdjlak">';
+echo '<img src="/barcodegenerator/generatebarcode?code=32656556">';
+echo '<img src="/barcodegenerator/generatebarcode?code=ewe51wew213..">';
+echo '<img src="/barcodegenerator/generatebarcode?code=asiold658">';
+exit;
 
-//$this->widget('DataGrid', array('model' => 'ProductDetails', 'pageSize' => 20));
+$this->widget('DataGrid', array('model' => 'ProductDetails', 'pageSize' => 20));
 ?>
