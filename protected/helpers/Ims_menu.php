@@ -12,6 +12,7 @@ class Ims_menu{
     	array('label'=>'Category List', 'url'=>array('category/')),
     	array('label'=>'Add Product', 'url'=>array('manage/create')),
     	array('label'=>'Product List', 'url'=>array('manage/')),
+    	array('label'=>'Generate Barcode', 'url'=>array('manage/barcode')),
     );
     
     public static $customer_menu = array(
@@ -42,7 +43,5 @@ class Ims_menu{
     	array('label'=>'Purchase Report', 'url'=>array('/reports/purchase')),
     	array('label'=>'Excheang Report', 'url'=>array('/reports/exchange')),
     );
-    
-    
     
 }

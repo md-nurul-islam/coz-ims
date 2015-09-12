@@ -59,10 +59,17 @@ class BarcodeGeneratorController extends CExtController {
      */
     public function actionGenerateBarcode() {
 
-        $text = (isset($_GET["code"]) ? $_GET["code"] : "0");
-        $size = (isset($_GET["size"]) ? $_GET["size"] : "50");
-        $orientation = (isset($_GET["orientation"]) ? $_GET["orientation"] : "horizontal");
-        $code_type = (isset($_GET["codetype"]) ? $_GET["codetype"] : "code128");
+        $text = Yii::app()->request->getParam('code');
+        
+        $size = Yii::app()->request->getParam('size');
+        $size = (!empty($size)) ? $size : '50';
+        
+        $orientation = Yii::app()->request->getParam('orientation');
+        $orientation = (!empty($orientation)) ? $orientation : 'horizontal';
+        
+        $code_type = Yii::app()->request->getParam('codetype');
+        $code_type = (!empty($code_type)) ? $code_type : 'code128';
+        
         $code_string = "";
 
         // Translate the $text into barcode the correct $code_type
@@ -160,11 +167,6 @@ class BarcodeGeneratorController extends CExtController {
         header('Content-type: image/png');
         imagepng($image);
         imagedestroy($image);
-
-//        $inputCode = Yii::app()->request->getParam("code", "");
-//        $bc = new BarcodeGenerator;
-//        $bc->init('png');
-//        $bc->build($inputCode);
     }
 
 }

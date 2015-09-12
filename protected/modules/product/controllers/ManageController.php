@@ -30,8 +30,8 @@ class ManageController extends Controller {
                 'users' => array('@'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('update_stock', 'delete'),
-                'expression' => 'Yii::app()->user->isSuperAdmin || Yii::app()->user->isStoreAdmin',
+                'actions' => array('update_stock', 'delete', 'barcode', 'downloadBarcode'),
+                'expression' => '(!Yii::app()->user->isGuest) && (Yii::app()->user->isSuperAdmin || Yii::app()->user->isStoreAdmin)',
             ),
             array('deny', // deny all users
                 'users' => array('*'),
@@ -218,6 +218,35 @@ class ManageController extends Controller {
             'model' => $model,
             'pageSize' => $pageSize,
         ));
+    }
+    
+    public function actionBarcode() {
+        
+        $modPurchase = new ProductStockEntries();
+        $purchaseRecords = $modPurchase->purchaseListForBarcode();
+        
+        $this->render('barcode', array(
+            'purchaseRecords' => $purchaseRecords
+        ));
+    }
+    
+    public function actionDownloadBarcode() {
+        
+        ini_set('max_execution_time', 0);
+        
+        # mPDF
+        $mPDF1 = Yii::app()->ePdf->mpdf();
+        
+        # You can easily override default constructor's params
+        $mPDF1 = Yii::app()->ePdf->mpdf('', 'A4');
+        
+        $modPurchase = new ProductStockEntries();
+        $purchaseRecords = $modPurchase->purchaseListForBarcode();
+        
+        # render (full page)
+        $mPDF1->WriteHTML($this->renderPartial('_barcode_partial', array('purchaseRecords' => $purchaseRecords), true));
+        $mPDF1->Output('filename.pdf','D');
+
     }
 
     /**

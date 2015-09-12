@@ -71,7 +71,7 @@ class ProductStockEntries extends CActiveRecord {
             'productDetails' => array(self::BELONGS_TO, 'ProductDetails', 'product_details_id',
 //                'select'=>'productDetails.id, productDetails.product_name',
 //                'joinType'=>'INNER JOIN',
-                'with'=>'productStockAvails'
+                'with' => 'productStockAvails'
             ),
             'supplier' => array(self::BELONGS_TO, 'SupplierDetails', 'supplier_id'),
             'category' => array(self::BELONGS_TO, 'CategoryDetails', 'category_id'),
@@ -119,12 +119,12 @@ class ProductStockEntries extends CActiveRecord {
      */
     public function search() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-        
+
         $store_id = 1;
         if (!Yii::app()->user->isSuperAdmin) {
             $store_id = Yii::app()->user->storeId;
         }
-        
+
         $criteria = new CDbCriteria;
 
         $criteria->compare('id', $this->id);
@@ -146,7 +146,7 @@ class ProductStockEntries extends CActiveRecord {
         $criteria->compare('grand_total_balance', $this->grand_total_balance, true);
         $criteria->compare('due_payment_date', $this->due_payment_date, true);
         $criteria->compare('serial_num', $this->serial_num);
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $criteria->compare('store_id', $store_id);
         }
@@ -167,13 +167,13 @@ class ProductStockEntries extends CActiveRecord {
     }
 
     public function getProductStockInfo($prod_id = '', $ref_num = '', $all = false) {
-        
+
         $store_id = 1;
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $store_id = Yii::app()->user->storeId;
         }
-        
+
         $criteria = new CDbCriteria;
         $criteria->select = 't.id, t.purchase_price, t.selling_price, t.product_details_id';
 
@@ -188,19 +188,19 @@ class ProductStockEntries extends CActiveRecord {
         } else {
             $criteria->group = 't.product_details_id';
         }
-        
+
         if (!empty($ref_num)) {
             $criteria->compare('t.ref_num', $ref_num);
         }
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $criteria->compare('productDetails.store_id', $store_id);
             $criteria->compare('productStockAvails.store_id', $store_id);
             $criteria->compare('t.store_id', $store_id);
         }
-        
+
         $criteria->compare('productDetails.status', 1);
-        
+
         $criteria->order = 't.id DESC';
 
         if (!$all) {
@@ -209,14 +209,14 @@ class ProductStockEntries extends CActiveRecord {
         } else {
             $data = $this->findAll($criteria);
         }
-        
+
         return (!empty($data)) ? $data : FALSE;
     }
 
     public function getPurchase($id) {
-        
+
         $store_id = 1;
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $store_id = Yii::app()->user->storeId;
         }
@@ -225,13 +225,13 @@ class ProductStockEntries extends CActiveRecord {
 
         $criteria->with = array('productDetails');
         $criteria->compare('purchase_id', $id);
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $criteria->compare('productDetails.store_id', $store_id);
             $criteria->compare('productStockAvails.store_id', $store_id);
             $criteria->compare('t.store_id', $store_id);
         }
-        
+
         $criteria->order = 't.id DESC';
 
         $data = $this->findAll($criteria);
@@ -269,12 +269,12 @@ class ProductStockEntries extends CActiveRecord {
 
     public function purchaseList() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-        
+
         $store_id = 1;
         if (!Yii::app()->user->isSuperAdmin) {
             $store_id = Yii::app()->user->storeId;
         }
-        
+
         $criteria = new CDbCriteria;
         $criteria->select = 't.purchase_id AS id, t.grand_total_paid';
         $criteria->with = array(
@@ -286,13 +286,13 @@ class ProductStockEntries extends CActiveRecord {
         $criteria->compare('t.purchase_id', $this->purchase_id, true);
         $criteria->compare('product_name', $this->product_name, true);
         $criteria->compare('t.grand_total_paid', $this->grand_total_paid, true);
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $criteria->compare('productDetails.store_id', $store_id);
             $criteria->compare('productStockAvails.store_id', $store_id);
             $criteria->compare('t.store_id', $store_id);
         }
-        
+
         $criteria->together = true;
         $criteria->group = 't.purchase_id';
         $criteria->order = 't.id DESC';
@@ -304,17 +304,48 @@ class ProductStockEntries extends CActiveRecord {
             'criteria' => $criteria,
         ));
     }
-    
-    public function purchaseReportData($from_date, $to_date) {
-        
+
+    public function purchaseListForBarcode() {
         $store_id = 1;
         if (!Yii::app()->user->isSuperAdmin) {
             $store_id = Yii::app()->user->storeId;
         }
-        
+
+        $criteria = new CDbCriteria;
+        $criteria->select = 't.id, t.purchase_id, t.product_details_id, t.purchase_date';
+        $criteria->with = array(
+            'productDetails' => array(
+                'select' => 'productDetails.product_name, productDetails.supplier_id, productDetails.category_id',
+                'joinType' => 'INNER JOIN'
+            ),
+        );
+
+        if (!Yii::app()->user->isSuperAdmin) {
+            $criteria->compare('t.store_id', $store_id);
+        }
+
+//        $criteria->addCondition('productStockAvails.quantity > 0');
+        $criteria->addCondition('t.ref_num IS NULL');
+        $criteria->addCondition('t.ref_num = 0', 'OR');
+        $criteria->addCondition("t.ref_num = ''", 'OR');
+
+        $criteria->order = 't.id DESC';
+        $criteria->limit = 100;
+
+        $data = $this->findAll($criteria);
+        return (!empty($data)) ? $this->formatPurchaseBarcodeData($data) : FALSE;
+    }
+
+    public function purchaseReportData($from_date, $to_date) {
+
+        $store_id = 1;
+        if (!Yii::app()->user->isSuperAdmin) {
+            $store_id = Yii::app()->user->storeId;
+        }
+
         $from_date = (!empty($from_date)) ? $from_date : date('Y-m-d', Settings::getBdLocalTime());
         $to_date = (!empty($to_date)) ? $to_date : date('Y-m-d', Settings::getBdLocalTime());
-        
+
         $criteria = new CDbCriteria;
         //var_dump($this->id);exit;
         $criteria->select = 't.id, t.purchase_id, t.ref_num, t.quantity, t.serial_num, t.selling_price, t.item_subtotal, t.grand_total_paid, t.grand_total_balance, t.grand_total_payable';
@@ -327,58 +358,75 @@ class ProductStockEntries extends CActiveRecord {
 
         $criteria->compare('DATE(t.purchase_date) >', $from_date);
         $criteria->compare('DATE(t.purchase_date) <', $to_date);
-        
+
         if (!Yii::app()->user->isSuperAdmin) {
             $criteria->compare('productDetails.store_id', $store_id);
             $criteria->compare('productStockAvails.store_id', $store_id);
             $criteria->compare('t.store_id', $store_id);
         }
-        
+
         $criteria->together = true;
         $criteria->order = 't.id DESC';
-        
+
         $data = $this->findAll($criteria);
-        
+
         return (!empty($data)) ? $this->formatPurchaseReportData($data) : FALSE;
     }
-    
+
     private function formatPurchaseReportData($obj_data) {
-        
+
         $formatted_data = array();
-        
+
         foreach ($obj_data as $row) {
             $sale_ids[] = $row->purchase_id;
         }
-        
+
         $sale_ids = array_unique($sale_ids);
-        
-        foreach ($sale_ids as $sale_id){
-            
+
+        foreach ($sale_ids as $sale_id) {
+
             $_data = array();
             foreach ($obj_data as $row) {
-                
-                if ($sale_id == $row->purchase_id){
-                    
+
+                if ($sale_id == $row->purchase_id) {
+
                     $_data['bill_total'] = ( empty($row->grand_total_payable) || ($row->grand_total_payable <= 0) ) ? 0.00 : $row->grand_total_payable;
                     $_data['amount_given'] = ( empty($row->grand_total_paid) || ($row->grand_total_paid <= 0) ) ? 0.00 : $row->grand_total_paid;
                     $_data['discount'] = ( empty($row->dis_amount) || ($row->dis_amount <= 0) ) ? 0.00 : $row->dis_amount;
                     $_data['balance'] = ( empty($row->grand_total_balance) || ($row->grand_total_balance <= 0) ) ? 0.00 : $row->grand_total_balance;
-                    
+
                     $cart['prod_name'] = $row->productDetails->product_name;
                     $cart['ref_num'] = $row->ref_num;
                     $cart['qty'] = $row->quantity;
                     $cart['price'] = $row->selling_price;
                     $cart['item_sub_total'] = $row->item_subtotal;
-                    
+
                     $_data[] = $cart;
                 }
-                
             }
-            
+
             $formatted_data[$sale_id][] = $_data;
-            
         }
+
+        return $formatted_data;
+    }
+
+    private function formatPurchaseBarcodeData($obj_data) {
+
+        $formatted_data = array();
         
+        foreach ($obj_data as $row) {
+            
+//            $_data['purchase_id'] = $row->id;
+            $_data['code'] =$row->purchase_id . $row->product_details_id;
+//            $_data['category_id'] = $row->productDetails->category_id;
+//            $_data['product_details_id'] = $row->product_details_id;
+            $_data['product_name'] = $row->productDetails->product_name;
+            $_data['purchase_date'] = str_replace('-', '', $row->purchase_date);
+            
+            $formatted_data[] = $_data;
+        }
+
         return $formatted_data;
     }
 
