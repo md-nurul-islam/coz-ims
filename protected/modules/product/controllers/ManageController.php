@@ -201,7 +201,7 @@ class ManageController extends Controller {
         if (isset($_GET['ProductDetails']['current_stock'])) {
             $model->current_stock = $_GET['ProductDetails']['current_stock'];
         }
-        
+
         if (isset($_GET['pageSize'])) {
             $pageSize = (int) $_GET['pageSize'];
             $model->pageSize = $pageSize;
@@ -219,34 +219,33 @@ class ManageController extends Controller {
             'pageSize' => $pageSize,
         ));
     }
-    
+
     public function actionBarcode() {
-        
+
+        ini_set('max_execution_time', 0);
+
         $modPurchase = new ProductStockEntries();
         $purchaseRecords = $modPurchase->purchaseListForBarcode();
-        
+
+        $mPDF1 = Yii::app()->ePdf->mpdf();
+
         $this->render('barcode', array(
-            'purchaseRecords' => $purchaseRecords
+            'purchaseRecords' => $purchaseRecords,
+            'pdf' => $mPDF1
         ));
     }
-    
-    public function actionDownloadBarcode() {
-        
-        ini_set('max_execution_time', 0);
-        
-        # mPDF
-        $mPDF1 = Yii::app()->ePdf->mpdf();
-        
-        # You can easily override default constructor's params
-        $mPDF1 = Yii::app()->ePdf->mpdf('', 'A4');
-        
-        $modPurchase = new ProductStockEntries();
-        $purchaseRecords = $modPurchase->purchaseListForBarcode();
-        
-        # render (full page)
-        $mPDF1->WriteHTML($this->renderPartial('_barcode_partial', array('purchaseRecords' => $purchaseRecords), true));
-        $mPDF1->Output('filename.pdf','D');
 
+    public function actionDownloadBarcode() {
+
+        $webroot = Yii::getPathOfAlias('webroot');
+        $pdfs_path = $webroot . DIRECTORY_SEPARATOR . 'barcode_pdfs' . DIRECTORY_SEPARATOR;
+        $name = 'barcodes.pdf';
+        
+        if (file_exists($pdfs_path . $name)) {
+            Yii::app()->getRequest()->sendFile($name, file_get_contents($pdfs_path . $name));
+        } else {
+            $this->render('download404');
+        }
     }
 
     /**

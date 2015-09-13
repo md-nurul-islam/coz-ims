@@ -1,10 +1,29 @@
+<?php
+$webroot = Yii::getPathOfAlias('webroot');
+$pdfs_path = $webroot . DIRECTORY_SEPARATOR . 'barcode_pdfs' . DIRECTORY_SEPARATOR;
+
+if (file_exists($pdfs_path . 'barcodes.pdf')) {
+    unlink($pdfs_path . 'barcodes.pdf');
+}
+
+ob_start();
+?>
+
 <div class="wrapper">
-    <?php foreach ($purchaseRecords as $pr) { ?>
-        <div class="code-wrapper">
-            <div class="prod_name"><?php echo $pr['product_name']; ?></div>
-            <div class="prod_barcode"><img src="/barcodegenerator/generatebarcode?code=<?php echo $pr['code']; ?>&size=30&codetype=code128"></div>
-            <div class="prod_ref_num"><?php echo $pr['code']; ?></div>
-        </div>
+    <?php
+    $c = 0;
+    foreach ($purchaseRecords as $pr) {
+        ?>
+        <?php for ($i = 0; $i < $pr['quantity']; $i++) { ?>
+            <div class="code-wrapper">
+                <div class="prod_name"><?php echo $pr['product_name']; ?></div>
+                <div class="prod_barcode"><img src="/barcodegenerator/generatebarcode?code=<?php echo $pr['code']; ?>&size=30&codetype=code128"></div>
+                <div class="prod_ref_num"><?php echo $pr['code']; ?></div>
+            </div>
+            <?php $c++; if ($c % 44 == 0) { ?>
+                <pagebreak />
+            <?php } ?>
+        <?php } ?>
     <?php } ?>
 </div>
 
@@ -24,9 +43,9 @@
     }
     .code-wrapper {
         float: left;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
         text-align: center;
-        width: 15%;
+        width: 25%;
     }
     .export-btn {
         background-color: #519cc6;
@@ -55,3 +74,14 @@
         color: #ffffff;
     }
 </style>
+
+<?php
+$s_pdf_content = ob_get_contents();
+ob_end_clean();
+
+echo $s_pdf_content;
+
+$pdf = Yii::app()->ePdf->mpdf('', 'A4');
+$pdf->WriteHTML($s_pdf_content);
+$pdf->Output($pdfs_path . DIRECTORY_SEPARATOR . 'barcodes.pdf', 'F');
+?>

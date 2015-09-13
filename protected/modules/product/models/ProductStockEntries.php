@@ -312,7 +312,7 @@ class ProductStockEntries extends CActiveRecord {
         }
 
         $criteria = new CDbCriteria;
-        $criteria->select = 't.id, t.purchase_id, t.product_details_id, t.purchase_date';
+        $criteria->select = 't.id, t.purchase_id, t.product_details_id, t.purchase_date, t.quantity';
         $criteria->with = array(
             'productDetails' => array(
                 'select' => 'productDetails.product_name, productDetails.supplier_id, productDetails.category_id',
@@ -422,6 +422,7 @@ class ProductStockEntries extends CActiveRecord {
 //            $_data['category_id'] = $row->productDetails->category_id;
 //            $_data['product_details_id'] = $row->product_details_id;
             $_data['product_name'] = $row->productDetails->product_name;
+            $_data['quantity'] = $row->quantity;
             $_data['purchase_date'] = str_replace('-', '', $row->purchase_date);
             
             $formatted_data[] = $_data;
