@@ -312,7 +312,7 @@ class ProductStockEntries extends CActiveRecord {
         }
 
         $criteria = new CDbCriteria;
-        $criteria->select = 't.id, t.purchase_id, t.product_details_id, t.purchase_date, t.quantity';
+        $criteria->select = 't.id, t.purchase_id, t.product_details_id, t.purchase_date, t.quantity, t.selling_price';
         $criteria->with = array(
             'productDetails' => array(
                 'select' => 'productDetails.product_name, productDetails.supplier_id, productDetails.category_id',
@@ -326,7 +326,7 @@ class ProductStockEntries extends CActiveRecord {
 
 //        $criteria->addCondition('productStockAvails.quantity > 0');
         $criteria->addCondition('t.ref_num IS NULL');
-        $criteria->addCondition('t.ref_num = 0', 'OR');
+        $criteria->addCondition("t.ref_num = '0'", 'OR');
         $criteria->addCondition("t.ref_num = ''", 'OR');
 
         $criteria->order = 't.id DESC';
@@ -417,10 +417,10 @@ class ProductStockEntries extends CActiveRecord {
         
         foreach ($obj_data as $row) {
             
-//            $_data['purchase_id'] = $row->id;
+            $_data['id'] = $row->id;
             $_data['code'] =$row->purchase_id . $row->product_details_id;
 //            $_data['category_id'] = $row->productDetails->category_id;
-//            $_data['product_details_id'] = $row->product_details_id;
+            $_data['selling_price'] = $row->selling_price;
             $_data['product_name'] = $row->productDetails->product_name;
             $_data['quantity'] = $row->quantity;
             $_data['purchase_date'] = str_replace('-', '', $row->purchase_date);

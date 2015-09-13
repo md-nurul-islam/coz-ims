@@ -30,7 +30,7 @@ class ManageController extends Controller {
                 'users' => array('@'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('update_stock', 'delete', 'barcode', 'downloadBarcode'),
+                'actions' => array('update_stock', 'delete', 'barcode', 'downloadBarcode', 'barcodeFileList', 'setbarcode'),
                 'expression' => '(!Yii::app()->user->isGuest) && (Yii::app()->user->isSuperAdmin || Yii::app()->user->isStoreAdmin)',
             ),
             array('deny', // deny all users
@@ -230,7 +230,7 @@ class ManageController extends Controller {
         $mPDF1 = Yii::app()->ePdf->mpdf();
 
         $this->render('barcode', array(
-            'purchaseRecords' => $purchaseRecords,
+            'purchaseRecords' => ($purchaseRecords) ? $purchaseRecords : array(),
             'pdf' => $mPDF1
         ));
     }
@@ -239,13 +239,56 @@ class ManageController extends Controller {
 
         $webroot = Yii::getPathOfAlias('webroot');
         $pdfs_path = $webroot . DIRECTORY_SEPARATOR . 'barcode_pdfs' . DIRECTORY_SEPARATOR;
-        $name = 'barcodes.pdf';
-        
+        $name = Yii::app()->request->getParam('barcode');
+
         if (file_exists($pdfs_path . $name)) {
             Yii::app()->getRequest()->sendFile($name, file_get_contents($pdfs_path . $name));
         } else {
-            $this->render('download404');
+            throw new CException(404, 'File not found.');
         }
+    }
+
+    public function actionSetbarcode() {
+
+        $ar_ids = Yii::app()->request->getParam('ids');
+        $ar_size = count($ar_ids);
+        
+        $respons = array();
+        if ($ar_size > 0) {
+            $command = Yii::app()->db->createCommand();
+            
+            $i = 0;
+            foreach ($ar_ids as $row) {
+                $command->update(ProductStockEntries::model()->tableName(), array(
+                    'ref_num' => $row['code'],
+                        ), 'id=:id', array(':id' => $row['id']));
+                $i++;
+            }
+            if($i == $ar_size) {
+                $respons['success'] = 'Done';
+            }
+        }
+
+        echo json_encode($respons);
+        Yii::app()->end();
+    }
+
+    public function actionBarcodeFileList() {
+        
+        $webroot = Yii::getPathOfAlias('webroot');
+        $pdfs_path = $webroot . DIRECTORY_SEPARATOR . 'barcode_pdfs';
+
+        $files = CFileHelper::findFiles($pdfs_path);
+        
+        $response = array();
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                $ar_file_name = explode('/', $file);
+                $response[] = end($ar_file_name);
+            }   
+        }
+        echo json_encode($response);
+        Yii::app()->end();
     }
 
     /**
