@@ -226,12 +226,19 @@ class ManageController extends Controller {
 
         $modPurchase = new ProductStockEntries();
         $purchaseRecords = $modPurchase->purchaseListForBarcode();
-
+        
+        $barcode['width'] = 500;
+        $barcode['height'] = 50;
+        $barcode['quality'] = 10;
+        $barcode['text'] = 0;
+        $barcode['img_path'] = Yii::getPathOfAlias("webroot").'/bc_image';
+        
         $mPDF1 = Yii::app()->ePdf->mpdf();
 
         $this->render('barcode', array(
             'purchaseRecords' => ($purchaseRecords) ? $purchaseRecords : array(),
-            'pdf' => $mPDF1
+            'pdf' => $mPDF1,
+            'barcode' => $barcode,
         ));
     }
 

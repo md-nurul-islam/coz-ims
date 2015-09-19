@@ -114,7 +114,7 @@ class SiteController extends Controller {
         $mPDF1 = Yii::app()->ePdf->mpdf('', 'A5');
 
         # render (full page)
-        $mPDF1->WriteHTML($this->render('logout', array(), true));
+        $mPDF1->WriteHTML($this->render('test', array(), true));
 
         # Load a stylesheet
 //        $stylesheet = file_get_contents(Yii::getPathOfAlias('webroot.css') . '/main.css');

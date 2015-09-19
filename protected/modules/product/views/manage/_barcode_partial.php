@@ -2,6 +2,7 @@
 $webroot = Yii::getPathOfAlias('webroot');
 $pdfs_path = $webroot . DIRECTORY_SEPARATOR . 'barcode_pdfs' . DIRECTORY_SEPARATOR;
 $now = time();
+Yii::import("application.extensions.barcode.*");
 
 ob_start();
 ?>
@@ -18,8 +19,14 @@ ob_start();
             ?>
             <?php for ($i = 0; $i < $pr['quantity']; $i++) { ?>
                 <div class="code-wrapper">
-                    <div class="prod_name"><?php echo $pr['product_name'] . ' TK ' . $pr['selling_price']; ?></div>
-                    <div class="prod_barcode"><img src="/barcodegenerator/generatebarcode?code=<?php echo $pr['code']; ?>&size=30&codetype=code128"></div>
+                    <div class="prod_barcode">
+                        <?php
+                        barcode::Barcode39($pr['code'], $barcode['width'], $barcode['height'], $barcode['quality'], $barcode['text'], $barcode['img_path'] . '/' . $pr['code'] . '.jpeg');
+                        ?>
+                        <img src="<?php echo '/bc_image' . '/' . $pr['code'] . '.jpeg'; ?>">
+                    </div>
+                    <div class="prod_name"><?php echo $pr['product_name']; ?></div>
+                    <div class="prod_ptice"><?php echo ' TK ' . $pr['selling_price']; ?></div>
                     <div class="prod_ref_num"><?php echo $pr['code']; ?></div>
                 </div>
                 <?php
@@ -40,7 +47,7 @@ ob_start();
     <?php } ?>
 </div>
 
-<style type="text/css">
+<style type="text/css" media="all">
     .note {
         color: red;
         font-size: 20px;
@@ -51,6 +58,8 @@ ob_start();
         width: 100%;
     }
     .wrapper {
+        margin: 0;
+        padding: 0;
         float: left;
         width: 100%;
     }
@@ -58,7 +67,15 @@ ob_start();
         float: left;
         margin-bottom: 20px;
         text-align: center;
-        width: 25%;
+        width: 30%;
+    }
+    .prod_barcode {
+        float: left;
+        width: 100%;
+    }
+    .prod_barcode img {
+        float: left;
+        width: 100%;
     }
 </style>
 
@@ -70,6 +87,7 @@ echo $s_pdf_content;
 
 if (!empty($purchaseRecords)) {
     $pdf = Yii::app()->ePdf->mpdf('', 'A4');
+    $pdf->SetDisplayMode('fullpage');
     $pdf->WriteHTML($s_pdf_content);
     $pdf->Output($pdfs_path . DIRECTORY_SEPARATOR . $now . '_barcodes.pdf', 'F');
 }

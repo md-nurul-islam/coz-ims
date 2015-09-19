@@ -4,7 +4,7 @@
 
 <div class="clearfix"></div>
 
-<?php $this->renderPartial('_barcode_partial', array('purchaseRecords' => $purchaseRecords, 'pdf' => $pdf)); ?>
+<?php $this->renderPartial('_barcode_partial', array('purchaseRecords' => $purchaseRecords, 'pdf' => $pdf, 'barcode' => $barcode,)); ?>
 
 <div class="clearfix"></div>
 
