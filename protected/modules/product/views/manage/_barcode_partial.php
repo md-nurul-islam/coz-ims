@@ -2,7 +2,6 @@
 $webroot = Yii::getPathOfAlias('webroot');
 $pdfs_path = $webroot . DIRECTORY_SEPARATOR . 'barcode_pdfs' . DIRECTORY_SEPARATOR;
 $now = time();
-Yii::import("application.extensions.barcode.*");
 
 ob_start();
 ?>
@@ -20,10 +19,7 @@ ob_start();
             <?php for ($i = 0; $i < $pr['quantity']; $i++) { ?>
                 <div class="code-wrapper">
                     <div class="prod_barcode">
-                        <?php
-                        barcode::Barcode39($pr['code'], $barcode['width'], $barcode['height'], $barcode['quality'], $barcode['text'], $barcode['img_path'] . '/' . $pr['code'] . '.jpeg');
-                        ?>
-                        <img src="<?php echo '/bc_image' . '/' . $pr['code'] . '.jpeg'; ?>">
+                        <img src="/product/barcode/generate?filetype=PNG&dpi=300&scale=1&rotation=0&font_family=0&font_size=0&text=<?php echo $pr['code']; ?>&thickness=30&code=BCGean13">
                     </div>
                     <div class="prod_name"><?php echo $pr['product_name']; ?></div>
                     <div class="prod_ptice"><?php echo ' TK ' . $pr['selling_price']; ?></div>
@@ -67,7 +63,7 @@ ob_start();
         float: left;
         margin-bottom: 20px;
         text-align: center;
-        width: 30%;
+        width: 20%;
     }
     .prod_barcode {
         float: left;
@@ -86,27 +82,27 @@ ob_end_clean();
 echo $s_pdf_content;
 
 if (!empty($purchaseRecords)) {
-    $pdf = Yii::app()->ePdf->mpdf('', 'A4');
-    $pdf->SetDisplayMode('fullpage');
-    $pdf->WriteHTML($s_pdf_content);
-    $pdf->Output($pdfs_path . DIRECTORY_SEPARATOR . $now . '_barcodes.pdf', 'F');
+//    $pdf = Yii::app()->ePdf->mpdf('', 'A4');
+//    $pdf->SetDisplayMode('fullpage');
+//    $pdf->WriteHTML($s_pdf_content);
+//    $pdf->Output($pdfs_path . DIRECTORY_SEPARATOR . $now . '_barcodes.pdf', 'F');
 }
 ?>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-
-        $.ajax({
-            url: '/product/manage/setbarcode',
-            type: 'post',
-            dataType: 'json',
-            data: {ids: <?php echo json_encode($i_purchase_row_ids); ?>},
-            success: function (response) {
-                console.log(response.success);
-            },
-            error: function (e) {
-
-            }
-        });
-    });
+//    $(document).ready(function () {
+//
+//        $.ajax({
+//            url: '/product/manage/setbarcode',
+//            type: 'post',
+//            dataType: 'json',
+//            data: {ids: <?php echo json_encode($i_purchase_row_ids); ?>},
+//            success: function (response) {
+//                console.log(response.success);
+//            },
+//            error: function (e) {
+//
+//            }
+//        });
+//    });
 </script>

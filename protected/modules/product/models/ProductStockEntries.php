@@ -414,12 +414,27 @@ class ProductStockEntries extends CActiveRecord {
     private function formatPurchaseBarcodeData($obj_data) {
 
         $formatted_data = array();
+        $date = date('ymd');
         
         foreach ($obj_data as $row) {
             
+            $id_len = strlen($row->id);
+            $max_len = 6;
+            $cur_len = 0;
+            
+            if($id_len < $max_len) {
+                $cur_len = $max_len - $id_len;
+            }
+            
+            $code_prefix = '';
+            for($i = 0; $i < $cur_len; $i++){
+                $code_prefix .= '0';
+            }
+            $code_prefix .= $row->id;
+            
             $_data['id'] = $row->id;
-            $_data['code'] = $row->purchase_id . $row->product_details_id;
-//            $_data['code'] = 'PP' . intval($row->purchase_price) . $row->purchase_id . $row->product_details_id . '-' . $row->quantity . '-' . $row->quantity;
+//            $_data['code'] = $row->purchase_id . $row->product_details_id;
+            $_data['code'] = $date.$code_prefix;
 //            $_data['purchase_price'] = $row->purchase_price;
             $_data['selling_price'] = $row->selling_price;
             $_data['product_name'] = $row->productDetails->product_name;

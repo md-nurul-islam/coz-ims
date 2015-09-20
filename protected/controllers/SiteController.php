@@ -109,7 +109,7 @@ class SiteController extends Controller {
 //        $this->layout = false;
         # mPDF
         $mPDF1 = Yii::app()->ePdf->mpdf();
-        
+
         # You can easily override default constructor's params
         $mPDF1 = Yii::app()->ePdf->mpdf('', 'A5');
 
@@ -119,18 +119,15 @@ class SiteController extends Controller {
         # Load a stylesheet
 //        $stylesheet = file_get_contents(Yii::getPathOfAlias('webroot.css') . '/main.css');
 //        $mPDF1->WriteHTML($stylesheet, 1);
-        
         # renderPartial (only 'view' of current controller)
 //        $mPDF1->WriteHTML($this->renderPartial('test', array(), true));
-
         # Renders image
 //        $mPDF1->WriteHTML(CHtml::image(Yii::getPathOfAlias('webroot.css') . '/bg.gif'));
 //        var_dump($mPDF1->Output());exit;
-        
         # Outputs ready PDF
         $mPDF1->Output();
 
 //        $this->render('test');
     }
-
+    
 }
