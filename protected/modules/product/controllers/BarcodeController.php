@@ -59,16 +59,16 @@ class BarcodeController extends Controller {
         $filetypes = array('PNG' => BCGDrawing::IMG_FORMAT_PNG, 'JPEG' => BCGDrawing::IMG_FORMAT_JPEG, 'GIF' => BCGDrawing::IMG_FORMAT_GIF);
 
         $drawException = null;
+        
         try {
             $color_black = new BCGColor(0, 0, 0);
             $color_white = new BCGColor(255, 255, 255);
-
+            
             $code_generated = new $className();
             
-            if (function_exists('baseCustomSetup')) {
-                $this->baseCustomSetup($code_generated, $_GET);
-            }
-
+            $this->baseCustomSetup($code_generated, $_GET);
+//            var_dump($code_generated);exit;
+            
             $scale = Yii::app()->request->getParam('scale');
 
 //            var_dump($code_generated->isDefaultEanLabelEnabled());exit;
@@ -121,7 +121,7 @@ class BarcodeController extends Controller {
 
     private function baseCustomSetup($barcode, $get) {
         
-        var_dump($get['font_family']);exit;
+//        var_dump($get['font_family']);exit;
         $bcdir = Yii::getPathOfAlias('application.vendors.barcodegen');
         $font_dir = $bcdir . DIRECTORY_SEPARATOR . 'font';
 
@@ -129,10 +129,11 @@ class BarcodeController extends Controller {
             $barcode->setThickness(max(9, min(90, intval($get['thickness']))));
         }
         
+        $font = 0;
         if ($get['font_family'] !== '0' && intval($get['font_size']) >= 1) {
             $font = new BCGFontFile($font_dir . '/' . $get['font_family'], intval($get['font_size']));
         }
-
+        
         $barcode->setFont($font);
     }
     

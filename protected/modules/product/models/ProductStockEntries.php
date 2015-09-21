@@ -435,7 +435,7 @@ class ProductStockEntries extends CActiveRecord {
             $_data['id'] = $row->id;
 //            $_data['code'] = $row->purchase_id . $row->product_details_id;
             $_data['code'] = $date.$code_prefix;
-//            $_data['purchase_price'] = $row->purchase_price;
+            $_data['purchase_price'] = $row->purchase_price;
             $_data['selling_price'] = $row->selling_price;
             $_data['product_name'] = $row->productDetails->product_name;
             $_data['quantity'] = $row->quantity;

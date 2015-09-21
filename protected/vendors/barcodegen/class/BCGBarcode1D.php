@@ -120,7 +120,7 @@ abstract class BCGBarcode1D extends BCGBarcode {
                 $font = new BCGFontPhp($font);
             }
         }
-        var_dump($font);exit;
+
         $this->font = $font;
     }
 

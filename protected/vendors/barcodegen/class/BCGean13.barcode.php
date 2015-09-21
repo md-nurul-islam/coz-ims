@@ -1,6 +1,7 @@
 <?php
+
 /**
- *--------------------------------------------------------------------
+ * --------------------------------------------------------------------
  *
  * Sub-Class - EAN-13
  *
@@ -12,7 +13,7 @@
  *
  * The checksum is always displayed.
  *
- *--------------------------------------------------------------------
+ * --------------------------------------------------------------------
  * Copyright (C) Jean-Sebastien Goupil
  * http://www.barcodephp.com
  */
@@ -22,6 +23,7 @@ include_once('BCGBarcode1D.php');
 include_once('BCGLabel.php');
 
 class BCGean13 extends BCGBarcode1D {
+
     protected $codeParity = array();
     protected $labelLeft = null;
     protected $labelCenter1 = null;
@@ -40,37 +42,37 @@ class BCGean13 extends BCGBarcode1D {
         // Left-Hand Even Parity is the inverse (0=0012) starting with a space
         // Right-Hand is the same of Left-Hand starting with a bar
         $this->code = array(
-            '2100',     /* 0 */
-            '1110',     /* 1 */
-            '1011',     /* 2 */
-            '0300',     /* 3 */
-            '0021',     /* 4 */
-            '0120',     /* 5 */
-            '0003',     /* 6 */
-            '0201',     /* 7 */
-            '0102',     /* 8 */
-            '2001'      /* 9 */
+            '2100', /* 0 */
+            '1110', /* 1 */
+            '1011', /* 2 */
+            '0300', /* 3 */
+            '0021', /* 4 */
+            '0120', /* 5 */
+            '0003', /* 6 */
+            '0201', /* 7 */
+            '0102', /* 8 */
+            '2001' /* 9 */
         );
 
         // Parity, 0=Odd, 1=Even for manufacturer code. Depending on 1st System Digit
         $this->codeParity = array(
-            array(0, 0, 0, 0, 0),   /* 0 */
-            array(0, 1, 0, 1, 1),   /* 1 */
-            array(0, 1, 1, 0, 1),   /* 2 */
-            array(0, 1, 1, 1, 0),   /* 3 */
-            array(1, 0, 0, 1, 1),   /* 4 */
-            array(1, 1, 0, 0, 1),   /* 5 */
-            array(1, 1, 1, 0, 0),   /* 6 */
-            array(1, 0, 1, 0, 1),   /* 7 */
-            array(1, 0, 1, 1, 0),   /* 8 */
-            array(1, 1, 0, 1, 0)    /* 9 */
+            array(0, 0, 0, 0, 0), /* 0 */
+            array(0, 1, 0, 1, 1), /* 1 */
+            array(0, 1, 1, 0, 1), /* 2 */
+            array(0, 1, 1, 1, 0), /* 3 */
+            array(1, 0, 0, 1, 1), /* 4 */
+            array(1, 1, 0, 0, 1), /* 5 */
+            array(1, 1, 1, 0, 0), /* 6 */
+            array(1, 0, 1, 0, 1), /* 7 */
+            array(1, 0, 1, 1, 0), /* 8 */
+            array(1, 1, 0, 1, 0) /* 9 */
         );
 
         $this->alignDefaultLabel(true);
     }
 
     public function alignDefaultLabel($align) {
-        $this->alignLabel = (bool)$align;
+        $this->alignLabel = (bool) $align;
     }
 
     /**
@@ -256,7 +258,7 @@ class BCGean13 extends BCGBarcode1D {
 
         // Draw Manufacturer Code
         for ($i = 0; $i < 5; $i++) {
-            $this->drawChar($im, self::inverse($this->findCode($temp_text[$i + 2]), $this->codeParity[(int)$temp_text[0]][$i]), false);
+            $this->drawChar($im, self::inverse($this->findCode($temp_text[$i + 2]), $this->codeParity[(int) $temp_text[0]][$i]), false);
         }
 
         // Draw Center Guard Bar
@@ -318,5 +320,7 @@ class BCGean13 extends BCGBarcode1D {
 
         return $text;
     }
+
 }
+
 ?>
