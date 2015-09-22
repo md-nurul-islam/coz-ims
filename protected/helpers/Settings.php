@@ -22,6 +22,16 @@ class Settings{
         '2' => 'Store Admin',
         '3' => 'Sales Operator',
     );
+    
+    public static $_num_zeros_for_barcode = array(
+        '0' => '000000',
+        '1' => '00000',
+        '2' => '0000',
+        '3' => '000',
+        '4' => '00',
+        '5' => '0',
+        '6' => '',
+    );
 }
 
 ?>

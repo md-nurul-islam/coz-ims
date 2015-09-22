@@ -30,7 +30,7 @@ class ManageController extends Controller {
                 'users' => array('@'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('update_stock', 'delete', 'barcode', 'downloadBarcode', 'barcodeFileList', 'setbarcode'),
+                'actions' => array('update_stock', 'delete', 'barcode', 'downloadBarcode', 'barcodeFileList'),
                 'expression' => '(!Yii::app()->user->isGuest) && (Yii::app()->user->isSuperAdmin || Yii::app()->user->isStoreAdmin)',
             ),
             array('deny', // deny all users
@@ -227,11 +227,14 @@ class ManageController extends Controller {
         $modPurchase = new ProductStockEntries();
         $purchaseRecords = $modPurchase->purchaseListForBarcode();
         
-        $barcode['width'] = 500;
-        $barcode['height'] = 50;
-        $barcode['quality'] = 10;
-        $barcode['text'] = 0;
-        $barcode['img_path'] = Yii::getPathOfAlias("webroot").'/bc_image';
+        $barcode['filetype'] = 'PNG';
+        $barcode['dpi'] = 300;
+        $barcode['scale'] = 1;
+        $barcode['rotation'] = 0;
+        $barcode['font_family'] = 'Arial.ttf';
+        $barcode['font_size'] = 7;
+        $barcode['thickness'] = 35;
+        $barcode['codetype'] = 'BCGean13';
         
         $mPDF1 = Yii::app()->ePdf->mpdf();
 
@@ -253,31 +256,6 @@ class ManageController extends Controller {
         } else {
             throw new CException(404, 'File not found.');
         }
-    }
-
-    public function actionSetbarcode() {
-
-        $ar_ids = Yii::app()->request->getParam('ids');
-        $ar_size = count($ar_ids);
-        
-        $respons = array();
-        if ($ar_size > 0) {
-            $command = Yii::app()->db->createCommand();
-            
-            $i = 0;
-            foreach ($ar_ids as $row) {
-                $command->update(ProductStockEntries::model()->tableName(), array(
-                    'ref_num' => $row['code'],
-                        ), 'id=:id', array(':id' => $row['id']));
-                $i++;
-            }
-            if($i == $ar_size) {
-                $respons['success'] = 'Done';
-            }
-        }
-
-        echo json_encode($respons);
-        Yii::app()->end();
     }
 
     public function actionBarcodeFileList() {

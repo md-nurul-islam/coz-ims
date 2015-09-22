@@ -418,19 +418,7 @@ class ProductStockEntries extends CActiveRecord {
         
         foreach ($obj_data as $row) {
             
-            $id_len = strlen($row->id);
-            $max_len = 6;
-            $cur_len = 0;
-            
-            if($id_len < $max_len) {
-                $cur_len = $max_len - $id_len;
-            }
-            
-            $code_prefix = '';
-            for($i = 0; $i < $cur_len; $i++){
-                $code_prefix .= '0';
-            }
-            $code_prefix .= $row->id;
+            $code_prefix = Settings::$_num_zeros_for_barcode[strlen($row->id)].$row->id;
             
             $_data['id'] = $row->id;
 //            $_data['code'] = $row->purchase_id . $row->product_details_id;
