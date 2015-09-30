@@ -21,7 +21,8 @@ class Ims_menu{
     );
     
     public static $purchase_menu = array(
-    	array('label'=>'Purchase Product', 'url'=>array('create')),
+    	array('label'=>'Purchase Product', 'url'=>array('createsingle')),
+//    	array('label'=>'Purchase Product', 'url'=>array('create')),
     	array('label'=>'Purchase List', 'url'=>array('index')),
     );
     
