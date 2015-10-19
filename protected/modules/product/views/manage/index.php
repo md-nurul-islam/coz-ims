@@ -30,7 +30,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         'product_name',
         array(
             'name' => 'current_stock',
-            'value' => '$data->productStockAvails->quantity',
+            'value' => '( isset($data->productStockAvails) && $data->productStockAvails->quantity > 0 ) ? $data->productStockAvails->quantity : 0',
             'htmlOptions' => array('width' => '60px'),
         ),
         'purchase_price',

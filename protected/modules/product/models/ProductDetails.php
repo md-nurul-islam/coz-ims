@@ -67,7 +67,7 @@ class ProductDetails extends CActiveRecord {
             'supplier' => array(self::BELONGS_TO, 'SupplierDetails', 'supplier_id', 'select' => 'id, supplier_name', 'joinType' => 'INNER JOIN'),
             'productStockAvails' => array(self::HAS_ONE, 'ProductStockAvail', 'product_details_id',
                 'select' => 'productStockAvails.id, productStockAvails.quantity',
-                'joinType' => 'INNER JOIN',
+                'joinType' => 'LEFT JOIN',
             ),
             'productStockEntries' => array(self::HAS_MANY, 'ProductStockEntries', 'product_details_id'),
             'productStockSales' => array(self::HAS_MANY, 'ProductStockSales', 'product_details_id'),
