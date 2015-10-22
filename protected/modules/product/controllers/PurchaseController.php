@@ -223,7 +223,7 @@ class PurchaseController extends Controller {
             $model->note = $note;
             $model->purchase_id = $purchase_id;
             $model->store_id = $store_id;
-
+            
             $model->product_details_id = $_POST['product_details_id'];
             $model->ref_num = $_POST['ref_num'];
             $model->quantity = intval($_POST['quantity']);
@@ -265,7 +265,7 @@ class PurchaseController extends Controller {
 
                 if ($model->insert()) {
                     Yii::app()->user->setFlash('success', 'Products successfully added to stock.');
-                    $this->redirect(array('create'));
+                    $this->redirect(array('createsingle'));
                 }
             }
         }
