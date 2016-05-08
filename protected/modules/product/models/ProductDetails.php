@@ -106,7 +106,12 @@ class ProductDetails extends CActiveRecord {
      */
     public function search() {
         // @todo Please modify the following code to remove attributes that should not be searched.
-
+        
+        $store_id = 1;
+        if (!Yii::app()->user->isSuperAdmin) {
+            $store_id = Yii::app()->user->storeId;
+        }
+        
         $criteria = new CDbCriteria;
 
         $criteria->with = array(
@@ -124,7 +129,7 @@ class ProductDetails extends CActiveRecord {
         $criteria->compare('selling_price', $this->selling_price, true);
         $criteria->compare('category.category_name', $this->category_id, true);
         $criteria->compare('productStockAvails.quantity', $this->current_stock, true);
-        $criteria->compare('t.store_id', Yii::app()->user->storeId);
+        $criteria->compare('t.store_id', $store_id);
 
         $criteria->compare('t.status', 1);
         $criteria->order = 't.id DESC';
