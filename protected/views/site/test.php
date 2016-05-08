@@ -26,5 +26,4 @@ for($i = 0; $i <= 100; $i++){
 }
 exit;
 
-$this->widget('DataGrid', array('model' => 'ProductDetails', 'pageSize' => 20));
 ?>

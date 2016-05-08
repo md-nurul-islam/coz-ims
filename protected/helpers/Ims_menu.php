@@ -43,6 +43,7 @@ class Ims_menu{
     	array('label'=>'Advance Sale Report', 'url'=>array('/reports/sale/advance_sale')),
     	array('label'=>'Purchase Report', 'url'=>array('/reports/purchase')),
     	array('label'=>'Excheang Report', 'url'=>array('/reports/exchange')),
+    	array('label'=>'Stock Report', 'url'=>array('/reports/stock')),
     );
     
 }

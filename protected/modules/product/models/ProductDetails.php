@@ -93,38 +93,6 @@ class ProductDetails extends CActiveRecord {
     }
 
     /**
-     * @return array for Data Grid Headers customized attribute labels (name=>label)
-     * remove the attributes don't needed in the Grid
-     */
-    public function dataGridHeaders() {
-        return array(
-            'id' => array('label' => 'ID', 'sortable' => 'true', 'width' => 50),
-            'category_name' => array('label' => 'Category Name', 'sortable' => 'true', 'width' => 80),
-            'supplier_name' => array('label' => 'Supplier Name', 'sortable' => 'true', 'width' => 80),
-            'product_name' => array('label' => 'Product Name', 'sortable' => 'true', 'width' => 180),
-            'quantity' => array('label' => 'Current Stock', 'sortable' => 'true', 'width' => 50),
-            'purchase_price' => array('label' => 'Last Purchase Price', 'sortable' => 'true', 'width' => 50),
-            'selling_price' => array('label' => 'Current Selling Price', 'sortable' => 'true', 'width' => 50),
-            'status' => array('label' => 'Status', 'sortable' => 'true', 'width' => 80)
-        );
-    }
-
-    public function dataGridRows($params = array()) {
-        
-        $command = Yii::app()->db->createCommand()
-                ->select( 'p.id, p.product_name, p.purchase_price, p.selling_price, p.status, c.category_name, s.supplier_name, ps.quantity' )
-                ->from($this->tableName() . ' p')
-                ->join(CategoryDetails::model()->tableName() . ' c', 'c.id=p.category_id')
-                ->join(SupplierDetails::model()->tableName() . ' s', 's.id=p.supplier_id')
-                ->join(ProductStockAvail::model()->tableName() . ' ps', 'p.id=ps.product_details_id')
-                ->limit(10)
-                ;
-        
-//                ->where('id=:id', array(':id' => $id))
-        return $command->queryAll();
-    }
-
-    /**
      * Retrieves a list of models based on the current search/filter conditions.
      *
      * Typical usecase:
